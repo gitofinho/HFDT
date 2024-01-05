@@ -1,0 +1,63 @@
+{
+    "events": [
+      {
+        "start_date": {
+          "year": "2023",
+          "month": "7",
+          "day": "24"
+        },
+        "end_date": {
+          "year": "2023",
+          "month": "8",
+          "day": "17"
+        },
+        "text": {
+          "headline": "보증료 수납대사",
+          "text": "기표된 보증료와 실제 수납된 보증료 대사 후, 은행에 차액 내역을 통지하는 업무로, 매일 20개 은행, 약 22,000건 처리<br> 월 26.4시간 업무감소 및 54,088천원 예산 절감<br>주택보증부 담당"
+        }
+      },
+      {
+        "start_date": {
+          "year": "2023",
+          "month": "9",
+          "day": "5"
+        },
+        "end_date": {
+          "year": "2023",
+          "month": "9",
+          "day": "27"
+        },
+        "text": {
+          "headline": "촉탁등기 세금신고",
+          "text": "근저당권 이전을 위한 촉탁 시 필요한 서류 작성 및 취등록 세금 신고 작업으로, 주 1회에 약 100건 진행<br> 월 63.3시간 업무감소 및 73,780천원 예산 절감<br>유동화자산부 담당"
+        }
+      },
+      {
+        "start_date": {
+          "year": "2023",
+          "month": "11",
+          "day": "15"
+        },
+        "end_date": {
+          "year": "2023",
+          "month": "11",
+          "day": "23"
+        },
+        "text": {
+          "headline": "SWAP 풀별 교차 검증",
+          "text": "매월 MBS SWAP Pool별 원리금 지급액 산출자료를 작성하고, SWAP 금융기관에 송부하여 산출 내역을 교차검증<br> 월 17.1시간 업무감소 및 49,125천원 예산 절감<br>신탁자산부 담당"
+        }
+      },
+      {
+        "start_date": {
+          "year": "2023",
+          "month": "7",
+          "day":"21"
+        },
+        "text": {
+          "headline": "Digital transformation Work start date",
+          "text": ""
+        }
+      }
+    ]
+  }
