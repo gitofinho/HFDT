@@ -50,3 +50,12 @@ if prompt := st.chat_input("What is up?"):
         message_placeholder.markdown(full_response)
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": full_response})
+
+    # GOOD OR BAD with response
+    columns = st.columns((1,1,5,1))
+    with columns[3]:
+        semi_col = st.columns(2)
+        with semi_col[0]:
+            st.button("👍", use_container_width=False,) #<- Button on the right
+        with semi_col[1]:
+            st.button("👎", use_container_width=False,) #<- Button on the right
