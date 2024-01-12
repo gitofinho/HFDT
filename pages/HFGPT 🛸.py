@@ -2,6 +2,13 @@ import streamlit as st
 import random
 import time
 
+from langchain_community.llms import CTransformers
+
+llm = CTransformers(
+    model="llama-2-7b-chat.ggmlv3.q2_K.bin",
+    model_type="llama"
+)
+
 st.set_page_config(page_title='HFDT-Platform' ,layout="wide",page_icon='🚀')
 
 "## 🛸 HFGPT"
@@ -34,6 +41,7 @@ if prompt := st.chat_input("What is up?"):
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
+        # assistant_response = llm(prompt)
         assistant_response = random.choice(
             [
                 "Hello there! How can I assist you today?",
@@ -48,6 +56,7 @@ if prompt := st.chat_input("What is up?"):
             # Add a blinking cursor to simulate typing
             message_placeholder.markdown(full_response + "▌")
         message_placeholder.markdown(full_response)
+
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
@@ -56,6 +65,6 @@ if prompt := st.chat_input("What is up?"):
     with columns[3]:
         semi_col = st.columns(2)
         with semi_col[0]:
-            st.button("👍", use_container_width=False,) #<- Button on the right
+            st.button("👍", use_container_width=True) #<- Button on the right
         with semi_col[1]:
-            st.button("👎", use_container_width=False,) #<- Button on the right
+            st.button("👎", use_container_width=True) #<- Button on the right
