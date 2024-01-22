@@ -19,16 +19,3 @@ async def generate_responses(question: str):
 async def ask(query: Query):
     # 제너레이터를 사용하여 스트리밍 응답 생성
     return StreamingResponse(generate_responses(query.question), media_type="text/event-stream")
-
-
-# from fastapi import FastAPI
-# from pydantic import BaseModel
-
-# from predict import gen
-
-# app = FastAPI()
-
-# @app.post("/predict")
-# def predict_api(prompt :str):
-#     result = gen(prompt)
-#     return result
