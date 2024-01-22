@@ -46,19 +46,7 @@ if prompt := st.chat_input("What is up?"):
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
-        # CASE 1, Langchain
-        # assistant_response = llm(prompt)
 
-        # CASE 2, RANDOM
-        # assistant_response = random.choice(
-        #     [
-        #         "Hello there! How can I assist you today?",
-        #         "Hi, human! Is there anything I can help you with?",
-        #         "Do you need help?",
-        #     ]
-        # )
-        
-        # CASE 3, Hugging Face
         for part_response in process(prompt):
             st.markdown(part_response)
         # assistant_response = process(prompt)
@@ -68,7 +56,7 @@ if prompt := st.chat_input("What is up?"):
         # #     time.sleep(0.05)
         # #     # Add a blinking cursor to simulate typing
         # #     message_placeholder.markdown(full_response + "▌")
-        message_placeholder.write(part_response)
+        # message_placeholder.write(part_response)
 
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": part_response})
