@@ -17,7 +17,7 @@ config.base_model_name_or_path =model
 model = AutoModelForCausalLM.from_pretrained(config.base_model_name_or_path, quantization_config=bnb_config, device_map="auto")
 model = PeftModel.from_pretrained(model, peft_model_name)
 tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
-# streamer = TextStreamer(tokenizer)
+streamer = TextStreamer(tokenizer)
 
 
 from typing import Generator
@@ -41,7 +41,7 @@ async def gen(x) -> Generator[str, None, None]:
         generation_config=generation_config,
         pad_token_id=tokenizer.eos_token_id,
         eos_token_id=tokenizer.eos_token_id,
-        # streamer=streamer,
+        streamer=streamer,
     )
 
     for partial_output in gened:
