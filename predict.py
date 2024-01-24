@@ -1,7 +1,8 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 from peft import PeftModel, PeftConfig
-from transformers import TextIteratorStreamer, GenerationConfig
+from transformers import TextStreamer, TextIteratorStreamer, GenerationConfig
+from threading import Thread
 
 model='./model'
 peft_model_name = './peft_model'
@@ -19,9 +20,41 @@ model = PeftModel.from_pretrained(model, peft_model_name)
 tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
 streamer = TextIteratorStreamer(tokenizer)
 
-from threading import Thread
 
-async def gen(x):
+from typing import Generator
+
+# async def gen(x) -> Generator[str, None, None]:
+#     generation_config = GenerationConfig(
+#         temperature=0.8,
+#         top_p=0.8,
+#         top_k=100,
+#         max_new_tokens=512,
+#         early_stopping=True,
+#         do_sample=True,
+#     )
+#     q = f"### instruction: {x}\n\n### Response: "
+#     gened = model.generate(
+#         **tokenizer(
+#             q,
+#             return_tensors='pt',
+#             return_token_type_ids=False
+#         ).to('cuda'),
+#         generation_config=generation_config,
+#         pad_token_id=tokenizer.eos_token_id,
+#         eos_token_id=tokenizer.eos_token_id,
+#         streamer=streamer,
+#     )
+
+#     for partial_output in gened:
+#         result_str = tokenizer.decode(partial_output)
+#         start_tag = f"\n\n### Response: "
+#         start_index = result_str.find(start_tag)
+
+#         if start_index != -1:
+#             result_str = result_str[start_index + len(start_tag):].strip()
+#             yield result_str
+
+async def gen(x) -> Generator[str, None, None]:
     generation_config = GenerationConfig(
         temperature=0.8,
         top_p=0.8,
@@ -52,12 +85,15 @@ async def gen(x):
     ))
     thread.start()
 
-    # 생성된 텍스트 스트리밍
     for partial_output in streamer:
-        result_str = tokenizer.decode(partial_output)
-        start_tag = f"\n\n### Response: "
-        start_index = result_str.find(start_tag)
+        yield partial_output
 
-        if start_index != -1:
-            result_str = result_str[start_index + len(start_tag):].strip()
-            yield result_str
+        # # result_str = tokenizer.decode(partial_output) # 이 줄을 삭제
+        # result_str = partial_output  # partial_output을 직접 사용
+        # print(result_str)
+        # start_tag = f"\n\n### Response: "
+        # start_index = result_str.find(start_tag)
+
+        # if start_index != -1:
+        #     result_str = result_str[start_index + len(start_tag):].strip()
+        #     yield result_str

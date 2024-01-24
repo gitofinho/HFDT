@@ -7,13 +7,38 @@ import json
 
 app = FastAPI()
 
+async def response_generator(query):
+    # Start the generation process
+    start_generation(query)
+
+    # Starting an infinite loop
+    while True:
+        # Obtain the value from the streamer queue
+        value = streamer_queue.get()
+        # Check for the stop signal, which is None in our case
+        if value == None:
+            # If stop signal is found break the loop
+            break
+        # Else yield the value
+        yield value
+        # statement to signal the queue that task is done
+        streamer_queue.task_done()
+
+        # guard to make sure we are not extracting anything from 
+        # empty queue
+        await asyncio.sleep(0.1)
+
 class Query(BaseModel):
     question: str
 
 async def generate_responses(question: str):
     async for response in gen(question):
-        # JSON 형식으로 각 부분 응답을 생성
-        yield json.dumps(jsonable_encoder{"part": response}) + "\n"
+        yield response
+
+@app.get('/ask/')
+async def stream(query: str):
+    print(f'Query receieved: {query}')
+    return StreamingResponse(generate_responses(query), media_type='text/event-stream')
 
 @app.post("/ask")
 async def ask(query: Query):

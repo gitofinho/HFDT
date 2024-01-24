@@ -8,11 +8,17 @@ import json
 backend = "http://localhost:8000/ask"
 
 def process(prompt):
-    with requests.post(backend, json={"question": prompt}, stream=True) as res:
-        for line in res.iter_lines():
-            if line:
-                json_response = json.loads(line.decode('utf-8'))
-                yield json_response["part"]
+    url = f"http://127.0.0.1:8000/ask/?query={prompt}"
+    with requests.get(url, stream=True) as res:
+        for chunk in res.iter_content(1024):
+            yield chunk
+
+# def process(prompt):
+#     with requests.post(backend, json={"question": prompt}, stream=True) as res:
+#         for line in res.iter_lines():
+#             if line:
+#                 json_response = json.loads(line.decode('utf-8'))
+#                 yield json_response["part"]
                 
 st.set_page_config(page_title='HFDT-Platform' ,layout="wide",page_icon='🚀')
 
@@ -46,9 +52,26 @@ if prompt := st.chat_input("What is up?"):
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
+        buffer = ""
+        for chunk in process(prompt):
+            decoded_chunk = chunk.decode('utf-8')
+            buffer += decoded_chunk
+            while "\n" in buffer:
+                line, buffer = buffer.split("\n", 1)
+                parsed_chunk = line
+                try:
+                    full_response += parsed_chunk
+                    message_placeholder.markdown(full_response + "▌")
+                except KeyError:
+                    pass
+        message_placeholder.markdown(full_response)
 
-        for part_response in process(prompt):
-            st.markdown(part_response)
+    # # Display assistant response in chat message container
+    # with st.chat_message("assistant"):
+    #     message_placeholder = st.empty()
+    #     full_response = ""
+    #     for part_response in process(prompt):
+    #         st.markdown(part_response.decode('utf-8'))
         # assistant_response = process(prompt)
         # # # Simulate stream of response with milliseconds delay
         # # for chunk in assistant_response.split():
@@ -59,7 +82,7 @@ if prompt := st.chat_input("What is up?"):
         # message_placeholder.write(part_response)
 
     # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": part_response})
+    st.session_state.messages.append({"role": "assistant", "content": full_response})
     # st.session_state.messages.append({"role": "assistant", "content": full_response})
 
     # GOOD OR BAD with response
