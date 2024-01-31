@@ -49,41 +49,24 @@ if prompt := st.chat_input("What is up?"):
         st.markdown(prompt)
 
     # Display assistant response in chat message container
+    res = requests.get(url = f"http://127.0.0.1:8000/ask/?query={prompt}", stream=True)
     with st.chat_message("assistant"):
         message_placeholder = st.empty()
         full_response = ""
         buffer = ""
-        for chunk in process(prompt):
+        for chunk in res:
             decoded_chunk = chunk.decode('utf-8')
             buffer += decoded_chunk
             while "\n" in buffer:
                 line, buffer = buffer.split("\n", 1)
-                parsed_chunk = line
+                parsed_chunk = json.loads(line.strip())
                 try:
-                    full_response += parsed_chunk
-                    message_placeholder.markdown(full_response + "▌")
+                    message_placeholder.markdown(parsed_chunk + "▌")
                 except KeyError:
                     pass
-        message_placeholder.markdown(full_response)
+        message_placeholder.markdown(parsed_chunk)
 
-    # # Display assistant response in chat message container
-    # with st.chat_message("assistant"):
-    #     message_placeholder = st.empty()
-    #     full_response = ""
-    #     for part_response in process(prompt):
-    #         st.markdown(part_response.decode('utf-8'))
-        # assistant_response = process(prompt)
-        # # # Simulate stream of response with milliseconds delay
-        # # for chunk in assistant_response.split():
-        # #     full_response += chunk + " "
-        # #     time.sleep(0.05)
-        # #     # Add a blinking cursor to simulate typing
-        # #     message_placeholder.markdown(full_response + "▌")
-        # message_placeholder.write(part_response)
-
-    # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
-    # st.session_state.messages.append({"role": "assistant", "content": full_response})
+    st.session_state.messages.append({"role": "assistant", "content": parsed_chunk})
 
     # GOOD OR BAD with response
     columns = st.columns((1,1,5,1))

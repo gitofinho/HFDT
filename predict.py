@@ -84,9 +84,31 @@ async def gen(x) -> Generator[str, None, None]:
         streamer=streamer,
     ))
     thread.start()
-
+    # # 24.01.24., 14:35 success
+    # for partial_output in streamer:
+    #     yield partial_output
+    # 24.01.24., 14:36 TEST
+    result_str = ""
     for partial_output in streamer:
-        yield partial_output
+        # partial_output에서 "### Response:" 이후의 텍스트만 추출
+        result_str += partial_output
+        start_tag = "\n\n### Response: "
+        start_index = result_str.find(start_tag)
+        if start_index != -1:
+            # 태그 이후의 텍스트만 추출하고 '</s>' 태그 제거
+            response = result_str[start_index + len(start_tag):]
+            response = response.replace('</s>', '').strip()  # '</s>' 태그 제거 및 공백 제거
+            yield response
+
+    # for partial_output in streamer:
+    #     result_str += partial_output  # partial_output을 직접 사용
+    #     print(result_str)
+    #     start_tag = f"\n\n### Response: "
+    #     start_index = partial_output.find(start_tag)
+
+    #     if start_index != -1:
+    #         result_str = result_str[start_index + len(start_tag):].strip()
+    #         yield result_str
 
         # # result_str = tokenizer.decode(partial_output) # 이 줄을 삭제
         # result_str = partial_output  # partial_output을 직접 사용
